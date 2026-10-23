@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b18">
+  <meta name="description" content="Val Orbit is building software to connect and synchronise the components behind spacecraft hardware-in-the-loop testing.">
+  <title>Val Orbit — Spacecraft testing, connected.</title>
+  <style>
+    :root {
+      --bg: #070b18;
+      --panel: rgba(15, 24, 46, .83);
+      --panel-strong: #101a31;
+      --text: #f4f8ff;
+      --muted: #a6b5d1;
+      --line: rgba(155, 190, 237, .17);
+      --accent: #7ce7e2;
+      --accent-blue: #77a9ff;
+      --accent-violet: #a5a6ff;
+      --max: 1160px;
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 76% 9%, rgba(76, 103, 214, .22), transparent 32rem),
+        radial-gradient(ellipse at 9% 29%, rgba(44, 199, 204, .10), transparent 28rem),
+        linear-gradient(180deg, #070b18 0%, #091124 52%, #070b18 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: .56;
+      background-image:
+        radial-gradient(1px 1px at 8% 17%, rgba(255,255,255,.95) 99%, transparent),
+        radial-gradient(1px 1px at 23% 71%, rgba(190,220,255,.8) 99%, transparent),
+        radial-gradient(1.5px 1.5px at 38% 23%, rgba(255,255,255,.8) 99%, transparent),
+        radial-gradient(1px 1px at 57% 13%, rgba(255,255,255,.75) 99%, transparent),
+        radial-gradient(1px 1px at 68% 76%, rgba(175,219,255,.9) 99%, transparent),
+        radial-gradient(1px 1px at 83% 45%, rgba(255,255,255,.75) 99%, transparent),
+        radial-gradient(1.5px 1.5px at 94% 18%, rgba(255,255,255,.9) 99%, transparent),
+        radial-gradient(1px 1px at 73% 31%, rgba(255,255,255,.6) 99%, transparent);
+      background-size: 510px 390px;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    .wrap { width: min(var(--max), calc(100% - 44px)); margin: 0 auto; }
+    .nav { height: 82px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 1.28rem; font-weight: 780; letter-spacing: -.045em; }
+    .brand-mark { position: relative; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(124,231,226,.55); border-radius: 11px; color: var(--accent); background: rgba(124,231,226,.08); }
+    .brand-mark::before { content: ""; width: 13px; height: 13px; border: 2px solid currentColor; border-radius: 50%; transform: rotate(-28deg); }
+    .brand-mark::after { content: ""; position: absolute; width: 25px; height: 8px; border: 1.5px solid currentColor; border-radius: 50%; transform: rotate(-35deg); }
+    .nav-right { display: flex; align-items: center; gap: 22px; color: var(--muted); font-size: .9rem; }
+    .nav-right .nav-link:hover { color: var(--text); }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: 999px; padding: 12px 19px; color: #06141d; background: var(--accent); font-weight: 780; cursor: pointer; transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
+    .button:hover { transform: translateY(-2px); background: #a0fff6; box-shadow: 0 10px 30px rgba(75,218,218,.16); }
+    .button:disabled { opacity: .65; cursor: wait; transform: none; }
+    .button .arrow { font-size: 1.05rem; }
+    .hero { position: relative; padding: 82px 0 72px; }
+    .hero::after { content: ""; position: absolute; width: 440px; height: 440px; right: -245px; top: -80px; border: 1px solid rgba(119,169,255,.11); border-radius: 50%; box-shadow: 0 0 0 42px rgba(119,169,255,.025), 0 0 0 95px rgba(119,169,255,.018); pointer-events: none; }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; color: #c9d9f4; background: rgba(255,255,255,.035); font-size: .79rem; font-weight: 690; }
+    .eyebrow-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 13px rgba(124,231,226,.85); }
+    h1 { max-width: 610px; margin: 24px 0 20px; font-size: clamp(3rem, 5.3vw, 5.15rem); line-height: .99; letter-spacing: -.075em; font-weight: 790; }
+    h1 .highlight { color: var(--accent); }
+    .hero-copy { max-width: 570px; color: var(--muted); font-size: 1.08rem; line-height: 1.78; }
+    .hero-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 28px; }
+    .quiet-link { color: #dce7fc; font-size: .92rem; }
+    .quiet-link span { color: var(--accent); margin-left: 4px; }
+    .microcopy { color: #8292b0; font-size: .8rem; margin-top: 12px; }
+    .visual { position: relative; min-height: 440px; border: 1px solid rgba(143,177,236,.2); border-radius: 28px; overflow: hidden; background: radial-gradient(ellipse at 50% 46%, rgba(46,95,163,.22), transparent 52%), linear-gradient(145deg, rgba(17,29,57,.92), rgba(7,13,28,.95)); box-shadow: 0 30px 100px rgba(0,0,0,.25); isolation: isolate; }
+    .visual::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(175,194,231,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(175,194,231,.045) 1px, transparent 1px); background-size: 34px 34px; mask-image: linear-gradient(to bottom, black, transparent 92%); z-index: -1; }
+    .visual-label { position: absolute; top: 19px; left: 22px; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: #a6b9d9; }
+    .orbit-ring { position: absolute; left: 50%; top: 46%; width: 340px; height: 142px; border: 1px solid rgba(124,231,226,.48); border-radius: 50%; transform: translate(-50%,-50%) rotate(-27deg); box-shadow: 0 0 25px rgba(124,231,226,.05); }
+    .orbit-ring.ring-two { width: 400px; height: 180px; border-color: rgba(119,169,255,.26); transform: translate(-50%,-50%) rotate(23deg); }
+    .orbit-ring.ring-three { width: 300px; height: 290px; border-color: rgba(165,166,255,.18); transform: translate(-50%,-50%) rotate(54deg); }
+    .satellite { position: absolute; left: 50%; top: 45%; width: 188px; height: 112px; transform: translate(-50%,-50%) rotate(-13deg); filter: drop-shadow(0 14px 24px rgba(0,0,0,.35)); }
+    .solar { position: absolute; top: 28px; width: 57px; height: 57px; border: 1px solid rgba(134,189,255,.88); background: repeating-linear-gradient(90deg, rgba(120,171,255,.1) 0 9px, rgba(124,195,255,.5) 10px 11px), repeating-linear-gradient(0deg, #142b54 0 9px, #4674a9 10px 11px); box-shadow: inset 0 0 13px rgba(75,146,255,.24); }
+    .solar.left { left: 0; transform: skewY(-8deg); }
+    .solar.right { right: 0; transform: skewY(8deg); }
+    .sat-body { position: absolute; top: 18px; left: 65px; width: 58px; height: 77px; border: 1px solid #bdcde0; border-radius: 5px; background: linear-gradient(120deg, #e4e9ee 0%, #8c9bb0 23%, #263c5a 52%, #d0d7e3 75%, #667a92 100%); }
+    .sat-body::before { content: ""; position: absolute; inset: 8px 9px; border: 1px solid rgba(8,20,42,.55); background: linear-gradient(135deg, rgba(124,231,226,.55), transparent 55%); }
+    .sat-body::after { content: ""; position: absolute; width: 8px; height: 8px; left: 24px; top: 28px; border-radius: 50%; border: 2px solid #172e4b; background: #8ee9ed; box-shadow: 0 0 10px rgba(124,231,226,.8); }
+    .sat-antenna { position: absolute; left: 91px; top: 4px; height: 16px; width: 2px; background: #d7e5f3; }
+    .sat-antenna::after { content: ""; position: absolute; top: -3px; left: -3px; width: 8px; height: 8px; border-radius: 50%; background: #7ce7e2; }
+    .signal { position: absolute; left: calc(50% + 83px); top: calc(45% - 61px); width: 42px; height: 42px; border: 1px solid rgba(124,231,226,.5); border-radius: 50%; transform: translate(-50%,-50%); }
+    .signal::before, .signal::after { content: ""; position: absolute; border: 1px solid rgba(124,231,226,.4); border-radius: 50%; inset: 7px; }
+    .signal::after { inset: -8px; border-color: rgba(124,231,226,.18); }
+    .visual-node { position: absolute; padding: 10px 12px; border: 1px solid rgba(162,190,238,.23); border-radius: 12px; background: rgba(10,19,39,.9); box-shadow: 0 10px 24px rgba(0,0,0,.16); }
+    .visual-node strong { display: block; font-size: .78rem; letter-spacing: -.01em; }
+    .visual-node small { display: block; color: #8fa4c5; margin-top: 2px; font-size: .67rem; }
+    .visual-node.sim { top: 100px; left: 19px; }
+    .visual-node.sensor { top: 105px; right: 17px; }
+    .visual-node.flight { bottom: 48px; left: 50%; transform: translateX(-50%); min-width: 168px; text-align: center; }
+    .val-chip { position: absolute; left: 50%; top: calc(46% + 88px); transform: translateX(-50%); display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid rgba(124,231,226,.34); border-radius: 999px; color: #d5fffb; background: rgba(9,28,43,.9); font-size: .72rem; font-weight: 750; white-space: nowrap; }
+    .val-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .visual-status { position: absolute; right: 17px; bottom: 15px; display: flex; align-items: center; gap: 7px; color: #99b4d6; font-size: .7rem; }
+    .visual-status i { display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .section { padding: 18px 0 62px; }
+    .three-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .point { display: flex; gap: 14px; align-items: flex-start; padding: 21px; border: 1px solid var(--line); border-radius: 18px; background: rgba(13,22,43,.54); }
+    .point-icon { flex: 0 0 35px; width: 35px; height: 35px; display: grid; place-items: center; border: 1px solid rgba(124,231,226,.2); border-radius: 11px; color: var(--accent); background: rgba(124,231,226,.07); }
+    .point h2 { margin: 1px 0 5px; font-size: .97rem; letter-spacing: -.025em; }
+    .point p { margin: 0; color: var(--muted); font-size: .83rem; }
+    .waitlist { padding: 25px 0 82px; }
+    .waitlist-card { position: relative; overflow: hidden; padding: clamp(28px, 5vw, 52px); border-radius: 28px; border: 1px solid rgba(124,231,226,.23); background: radial-gradient(ellipse at 100% 0%, rgba(72,130,231,.16), transparent 39%), linear-gradient(120deg, rgba(15,26,49,.98), rgba(9,17,34,.96)); }
+    .waitlist-card::after { content: ""; position: absolute; width: 380px; height: 380px; right: -210px; bottom: -250px; border: 1px solid rgba(124,231,226,.16); border-radius: 50%; box-shadow: 0 0 0 35px rgba(124,231,226,.025), 0 0 0 75px rgba(124,231,226,.02); pointer-events: none; }
+    .waitlist-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr .82fr; gap: 40px; align-items: center; }
+    .kicker { color: var(--accent); text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; font-weight: 820; }
+    .waitlist-card h2 { max-width: 560px; margin: 11px 0 12px; font-size: clamp(2rem, 3.5vw, 2.8rem); line-height: 1.06; letter-spacing: -.06em; }
+    .waitlist-card p { color: var(--muted); max-width: 520px; margin: 0; font-size: .95rem; }
+    .form { display: flex; gap: 9px; margin-top: 22px; max-width: 560px; }
+    .form input { min-width: 0; flex: 1; padding: 14px 16px; border-radius: 999px; outline: none; color: var(--text); border: 1px solid rgba(167,192,230,.23); background: rgba(5,10,22,.55); }
+    .form input::placeholder { color: #7789a8; }
+    .form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,231,226,.1); }
+    .form .button { white-space: nowrap; }
+    .form-message { min-height: 24px; font-size: .85rem; margin-top: 10px; color: var(--muted); }
+    .form-message.success { color: var(--accent); }
+    .form-message.error { color: #ffaaa8; }
+    .waitlist-visual { padding: 20px 22px; border: 1px solid var(--line); border-radius: 18px; background: rgba(5,12,27,.38); }
+    .mini-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: .83rem; }
+    .mini-row:last-child { border-bottom: 0; }
+    .mini-row span { color: var(--muted); }
+    .pill { padding: 5px 9px; border-radius: 999px; color: var(--accent); background: rgba(124,231,226,.09); border: 1px solid rgba(124,231,226,.13); font-size: .69rem; white-space: nowrap; }
+    footer { border-top: 1px solid var(--line); padding: 22px 0; color: #7f91b0; font-size: .8rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; align-items: center; }
+    .footer-brand { color: var(--text); font-weight: 750; }
+    @media (max-width: 900px) {
+      .hero-grid, .waitlist-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 62px; }
+      .hero-grid { gap: 35px; }
+      .visual { min-height: 420px; }
+      .visual { max-width: 650px; width: 100%; }
+      .waitlist-visual { max-width: 600px; }
+      .three-points { grid-template-columns: 1fr; }
+      .point { padding: 17px 19px; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(var(--max), calc(100% - 30px)); }
+      .nav { height: 70px; }
+      .nav-right .nav-link { display: none; }
+      .nav-right { gap: 0; }
+      .nav-right .button { padding: 10px 14px; font-size: .82rem; }
+      .hero { padding: 48px 0 42px; }
+      h1 { font-size: clamp(2.7rem, 13vw, 4rem); }
+      .hero-copy { font-size: 1rem; }
+      .visual { min-height: 385px; }
+      .orbit-ring { width: 265px; height: 118px; }
+      .orbit-ring.ring-two { width: 315px; height: 155px; }
+      .orbit-ring.ring-three { width: 245px; height: 235px; }
+      .satellite { transform: translate(-50%,-50%) scale(.82) rotate(-13deg); }
+      .visual-node { padding: 8px 9px; }
+      .visual-node.sim { left: 10px; top: 77px; }
+      .visual-node.sensor { right: 10px; top: 80px; }
+      .visual-node strong { font-size: .7rem; }
+      .visual-node small { font-size: .6rem; }
+      .val-chip { top: calc(46% + 75px); }
+      .visual-node.flight { bottom: 43px; }
+      .visual-status { font-size: .64rem; }
+      .section { padding: 8px 0 42px; }
+      .waitlist { padding: 14px 0 56px; }
+      .form { flex-direction: column; }
+      .form .button { width: 100%; }
+      .waitlist-card { padding: 27px 22px; }
+      .waitlist-visual { padding: 15px 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="Val Orbit home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Val Orbit</span>
+      </a>
+      <div class="nav-right">
+        <a class="nav-link" href="#approach">The approach</a>
+        <a class="button" href="#waitlist">Join the waitlist <span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Spacecraft HIL orchestration</div>
+          <h1>Spacecraft testing, <span class="highlight">connected.</span></h1>
+          <p class="hero-copy">Val Orbit is building software to connect and synchronise the simulators, sensor systems and flight computers behind closed-loop spacecraft testing.</p>
+          <div class="hero-actions">
+            <a class="button" href="#waitlist">Join the waitlist <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="quiet-link" href="#approach">How it works <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="microcopy">For spacecraft teams building and validating complex systems.</p>
+        </div>
+
+        <div class="visual" role="img" aria-label="Concept illustration of a satellite and connected simulation, sensor and flight computer systems">
+          <div class="visual-label">One coordinated test environment</div>
+          <div class="orbit-ring"></div>
+          <div class="orbit-ring ring-two"></div>
+          <div class="orbit-ring ring-three"></div>
+          <div class="visual-node sim"><strong>Orbital dynamics</strong><small>Basilisk / simulation</small></div>
+          <div class="visual-node sensor"><strong>Sensor systems</strong><small>Data generation</small></div>
+          <div class="satellite" aria-hidden="true">
+            <div class="solar left"></div><div class="solar right"></div>
+            <div class="sat-body"></div><div class="sat-antenna"></div>
+          </div>
+          <div class="signal" aria-hidden="true"></div>
+          <div class="val-chip">Val Orbit · Orchestration</div>
+          <div class="visual-node flight"><strong>Flight computer</strong><small>On-board software · interfaces</small></div>
+          <div class="visual-status"><i></i> Closed-loop workflow concept</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="approach" aria-label="What Val Orbit does">
+      <div class="three-points">
+        <article class="point">
+          <div class="point-icon" aria-hidden="true">⤳</div>
+          <div><h2>Connect</h2><p>Link existing simulation software, hardware and flight computers.</p></div>
+        </article>
+        <article class="point">
+          <div class="point-icon" aria-hidden="true">◉</div>
+          <div><h2>Synchronise</h2><p>Coordinate data and timing across the test environment.</p></div>
+        </article>
+        <article class="point">
+          <div class="point-icon" aria-hidden="true">↻</div>
+          <div><h2>Repeat</h2><p>Make integrated test setups easier to configure and reuse.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="waitlist wrap" id="waitlist">
+      <div class="waitlist-card">
+        <div class="waitlist-grid">
+          <div>
+            <div class="kicker">Early access</div>
+            <h2>Help shape spacecraft testing.</h2>
+            <p>We're speaking with spacecraft teams about HIL integration. Join the waitlist for product updates and an opportunity to help shape Val Orbit's first release.</p>
+            <form class="form" id="waitlistForm">
+              <label for="email" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Email address</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+              <button class="button" type="submit" id="submitButton">Join the waitlist <span class="arrow" aria-hidden="true">→</span></button>
+            </form>
+            <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
+            <div class="microcopy">No spam. Just occasional updates about Val Orbit.</div>
+          </div>
+          <div class="waitlist-visual" aria-label="Components Val Orbit aims to coordinate">
+            <div class="mini-row"><span>Orbital dynamics</span><b class="pill">Simulation</b></div>
+            <div class="mini-row"><span>Sensor data generation</span><b class="pill">Sensors</b></div>
+            <div class="mini-row"><span>Flight computer & software</span><b class="pill">On-board</b></div>
+            <div class="mini-row"><span>Electronics & interfaces</span><b class="pill">Hardware</b></div>
+            <div class="mini-row"><span>Timing & data flow</span><b class="pill">Orchestration</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"></span><span>Val Orbit</span></a>
+      <span>© <span id="year"></span> Val Orbit</span>
+    </div>
+  </footer>
+
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /*
+      Waitlist integration:
+      This form expects your Node.js backend to expose POST /api/waitlist
+      and accept JSON in the shape { "email": "person@example.com" }.
+      Expected success response: { "message": "You're on the list!" }.
+      The page uses a relative URL so it works when served by your Node app
+      over either HTTP or HTTPS. No email address is stored in this HTML.
+    */
+    const waitlistForm = document.getElementById('waitlistForm');
+    const formMessage = document.getElementById('formMessage');
+    const submitButton = document.getElementById('submitButton');
+
+    waitlistForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      formMessage.className = 'form-message';
+      formMessage.textContent = '';
+      const email = document.getElementById('email').value.trim();
+      if (!email) return;
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Joining…';
+
+      try {
+        const response = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.message || 'We could not add you right now. Please try again.');
+        }
+
+        formMessage.textContent = data.message || "You're on the list! Thanks for your interest in SyncKit.";
+        formMessage.classList.add('success');
+        waitlistForm.reset();
+      } catch (error) {
+        console.error('Waitlist submission failed:', error);
+        formMessage.textContent = error.message || 'Something went wrong. Please try again in a moment.';
+        formMessage.classList.add('error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Join the waitlist <span aria-hidden="true">→</span>';
+      }
+    });
+  </script>
+</body>
+</html>
