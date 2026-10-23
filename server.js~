@@ -1,0 +1,101 @@
+// server.js
+
+//import {sqlInit} from "./handleSql.js";
+//const sqlCustom = require("./handleSql.js");
+// Import the Express.js framework
+const express = require('express');
+//import {sqlInit} from "./handleSql.js";
+const sqlCustom = require("./handleSql.js");
+const path = require('path');
+
+// Create an instance of the Express application
+const app = express();
+// Define the port the server will listen on
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+
+
+// Middleware to enable CORS (Cross-Origin Resource Sharing)
+// This is necessary to allow the frontend (running on a different origin,
+// or directly from a file) to make requests to this backend.
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Allow all origins for simplicity in this basic example
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+// Define a POST route for the root path '/'
+app.post('/', (req, res) => {
+    console.log('Received POST request to /');
+    console.log('Request Body:', req.body); // Will be available if you sent JSON or form data
+
+    // Respond to the client
+    res.status(200).json({ message: 'POST request received successfully at root!' });
+});
+
+
+// Serve static files from the 'public' directory
+// This assumes your index.html and other frontend assets will be in a folder named 'public'
+// For this basic example, we'll serve index.html directly from the root route later.
+// If you uncomment this, make sure to create a 'public' folder and put index.html inside it.
+__dirname = 'E:/Users/CTEKIN/aws/testing/testingJS/public';
+
+app.use(express.static(__dirname));
+
+// Define a simple API endpoint
+app.get('/api/message', (req, res) => {
+    // Send a JSON response
+    res.json({ message: 'Hello from the Node.js Backend!\nTop of the morning to you!'});
+
+});
+
+
+app.get('/api/some',(req,res) => {
+	res.json({ message: 'hello gordan'});
+
+
+});
+
+// Define the root route to serve the frontend HTML file
+// In a real application, you might use app.use(express.static('public'))
+// and have index.html inside the 'public' folder.
+// For this basic example, we'll send the file directly.
+app.get('/', (req, res) => {
+    // __dirname is the directory name of the current module.
+    // This sends the index.html file located in the same directory as server.js.
+    res.sendFile(__dirname + '/index.html');
+    //res.status(200).json({message: 'User data.'});
+});
+
+
+// Start the server and listen for incoming requests
+app.listen(PORT, () => {
+    console.log(`Backend server running on http://localhost:${PORT}`);
+    console.log(`Frontend accessible at http://localhost:${PORT}`);
+    
+});
+
+console.log('------------------------------------------------');
+
+async function getData()
+{
+	console.log('Starting..');
+	const result =await someAsyncOperation();
+	console.log('result: ${result}');
+	return result;
+}
+
+function someAsyncOperation(){
+	return new Promise((resolve,reject) =>{
+		//(resolve) => {
+		//console.log('Can you make some noise');
+		setTimeout(() => resolve('Operation completed'), 1);
+		//}
+	});
+}
+
+getData().then(data => console.log('Final data:',data));
+
+// stuff has been edited
+//sqlCustom.sqlInit();

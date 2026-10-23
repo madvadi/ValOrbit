@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Node.js App</title>
+
+    <script src="/js/createTable.js"></script>
+    <!-- Load Tailwind CSS for basic styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Inter font and overall layout */
+        body {
+            font-family: "Inter", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5; /* Light gray background */
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 2.5rem; /* Increased padding */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            text-align: center;
+            max-width: 90%; /* Responsive width */
+            width: 500px; /* Max width for larger screens */
+        }
+        button {
+            transition: all 0.2s ease-in-out; /* Smooth transitions for hover effects */
+        }
+        button:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* More pronounced shadow on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Welcome to Your Basic App!</h1>
+        <p class="text-lg text-gray-600 mb-8">Click the button below to fetch a message from the Node.js backend.</p>
+        
+        <button id="fetchButton" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+            Fetch Backend Message
+        </button>
+        
+        <div id="messageDisplay" class="mt-8 p-4 bg-blue-50 text-blue-800 border border-blue-200 rounded-lg text-lg hidden">
+            <!-- Message from backend will be displayed here -->
+        </div>
+
+	<div id="myDisplay" class="mt-8 p-4 bg-blue-50 test-blue-800 border border-blue-200 rounded-lg text-lg hidden">
+        </div>
+
+        <div id="errorMessage" class="mt-8 p-4 bg-red-50 text-red-800 border border-red-200 rounded-lg text-lg hidden">
+            <!-- Error messages will be displayed here -->
+        </div>
+
+	<button id="createTableButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-x1 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300">
+		Create a Table
+	</button>
+    </div>
+
+
+    <script>
+        // Get references to the DOM elements
+        const fetchButton = document.getElementById('fetchButton');
+        const messageDisplay = document.getElementById('messageDisplay');
+        const errorMessage = document.getElementById('errorMessage');
+	const myDisplay = document.getElementById('myDisplay');
+
+        // Add an event listener to the button
+        fetchButton.addEventListener('click', async () => {
+            // Hide previous messages
+            messageDisplay.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+	    myDisplay.classList.add('hidden');
+            messageDisplay.textContent = '';
+            errorMessage.textContent = '';
+	    myDisplay.textContent = '';
+
+
+            try {
+                // Fetch data from the backend API endpoint
+                // Note: If you run the frontend directly from a file (e.g., file:///path/to/index.html),
+                // you will need the CORS middleware in server.js.
+                // If you access it via http://localhost:3000 (served by Node.js), CORS is less of an issue.
+                const response = await fetch('http://localhost:3000/api/message');
+                
+                // Check if the response was successful
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Display the message from the backend
+                messageDisplay.textContent = data.message;
+                messageDisplay.classList.remove('hidden'); // Show the message div
+
+		const test = await fetch('http://localhost:3000/api/some');
+
+		const testData = await test.json();
+
+		myDisplay.textContent = testData.message;
+		myDisplay.classList.remove('hidden');
+            } catch (error) {
+                // Handle any errors during the fetch operation
+                console.error('Error fetching message:', error);
+                errorMessage.textContent = `Failed to fetch message: ${error.message}. Make sure the Node.js backend is running.`;
+                errorMessage.classList.remove('hidden'); // Show the error message div
+            }
+        });
+
+	document.addEventListener('click',async () => {
+	   createTable(document.createElement("table"),document.createElement("tbody"));
+	});
+        // Optional: Automatically fetch message on page load if desired
+        // window.onload = () => {
+        //     fetchButton.click(); // Simulate a click on page load
+        // };
+    </script>
+</body>
+</html>
